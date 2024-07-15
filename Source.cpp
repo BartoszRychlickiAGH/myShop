@@ -5,7 +5,7 @@
 #include "AdminForm.h"
 
 #include <regex>
-#include <iostream>
+//#include <iostream>
 
 using namespace System;
 using namespace System::Windows::Forms;
@@ -46,7 +46,7 @@ void main(array<String^>^ args) {
 	if (user != nullptr) {
 		MessageBox::Show("Authentication succesful", "Logging in...", MessageBoxButtons::OK);
 		
-		if (user->getUsername() != "Admin" || user->getUsername() != "admin") {
+		if (user->username != "Admin" || user->username != "admin") {
 			myShop::CustomerForm customerForm;
 			customerForm.ShowDialog();
 		

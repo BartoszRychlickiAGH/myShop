@@ -210,7 +210,7 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		SqlConnection sqlConn{ connString };
 		sqlConn.Open();
 
-		String^ sqlQuery = "Select * From Users WHERE Login = @Username AND Pwd = @Pwd";
+		String^ sqlQuery = "Select Name,Surname,Login,Pwd,Age From Users WHERE Login = @Username AND Pwd = @Pwd";
 		SqlCommand command(sqlQuery, %sqlConn);
 		command.Parameters->AddWithValue("@Username",username);
 		command.Parameters->AddWithValue("@Pwd", password);
@@ -218,10 +218,13 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		SqlDataReader^ reader = command.ExecuteReader();
 
 		if (reader->Read()) {
-			user = gcnew User(reader["Name"]->ToString(),
-				reader["Surname"]->ToString(), reader["Login"]->ToString(),
-				reader["Pwd"]->ToString(), Convert::ToInt32(reader["Age"]));
 			
+			user = gcnew User;
+			user->name = reader["Name"]->ToString();
+			user->surname = reader["Surname"]->ToString();
+			user->username = reader["Login"]->ToString();
+			user->password = reader["Pwd"]->ToString();
+			user->age = Convert::ToInt32(Convert::ToInt32(reader["Age"]));
 
 
 			this->Close();

@@ -1,9 +1,12 @@
 #pragma once
 #include "Users.h"
+#include <regex>
+#include <string>
+
 
 
 namespace myShop {
-
+	using std::string;
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
@@ -280,18 +283,68 @@ private: System::Void llLogin_LinkClicked(System::Object^ sender, System::Window
 	switchToLogin = true;
 	this->Close();
 }
+	   bool isInteger(String^ input) {
+		   int result;
+		   return Int32::TryParse(input, result);
+	   
+	   };
+
 private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) {
 	String^ name = this->tbName->Text;
 	String^ surname = this->tbSurname->Text;
 	String^ username = this->tbUsername->Text;
 	String^ password = this->tbPassword->Text;
 	String^ confirmPassword = this->tbConfirmPassword->Text;
-	int age = Convert::ToInt32(this->tbAge->Text);
+	String^ age = this->tbAge->Text;
 
+	if (name == "" || surname == "" || username == "" || password == "" || confirmPassword == "" || age == "") {
+		MessageBox::Show("Fill all fields", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		
+	}
+	if (confirmPassword != password) { // if instruction is checking if user enetered confirmatiom password correctly
+		MessageBox::Show("Passwords do not match", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		return;
+	}
+	if (!isInteger(age)) { // isIntegral is a outer function, wich were built to check if the entered age is a number
+		MessageBox::Show("Age must be a number", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		return;
+	
+	}
 
+	try {
+		String^ stringConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
+		
+		//Open connection
+		SqlConnection conn{stringConn};
+		conn.Open();
 
+		//Handle query
+		String^ sqlQuery = "INSERT INTO Users(Name,Surname,Login,Pwd,Age) VALUES (@name,@surname,@login,@password,@age)";
+		SqlCommand^ command = gcnew SqlCommand(sqlQuery, % conn);
+		command->Parameters->AddWithValue("@name",name );
+		command->Parameters->AddWithValue("@surname",surname);
+		command->Parameters->AddWithValue("@login",username);
+		command->Parameters->AddWithValue("@password",password);
+		command->Parameters->AddWithValue("@age",Convert::ToInt32(age));
 
+		command->ExecuteNonQuery();
 
+		//updating user data
+		user = gcnew User;
+		user->name = name;
+		user->surname = surname;
+		user->username = username;
+		user->password = password;
+		user->age = Convert::ToInt32(age);
+
+		this->Close();
+
+	}
+	catch (Exception^ ex) {
+		MessageBox::Show(ex->Message,"Error",MessageBoxButtons::OK,MessageBoxIcon::Error);
+		return;
+		
+	}
 }
 };
 }
