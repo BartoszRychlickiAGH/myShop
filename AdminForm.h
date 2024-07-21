@@ -48,11 +48,12 @@ namespace myShop {
 	private: System::Windows::Forms::NumericUpDown^ nUnDManageProducts;
 
 
-	private: System::Windows::Forms::NumericUpDown^ nUnDManageOrders;
+
 
 	private: System::Windows::Forms::Label^ label1;
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::Label^ label3;
+	private: System::Windows::Forms::NumericUpDown^ nUnDManageOrders;
 
 	protected:
 
@@ -76,10 +77,10 @@ namespace myShop {
 			this->WelcomeLabel = (gcnew System::Windows::Forms::Label());
 			this->nUnDManageUsers = (gcnew System::Windows::Forms::NumericUpDown());
 			this->nUnDManageProducts = (gcnew System::Windows::Forms::NumericUpDown());
-			this->nUnDManageOrders = (gcnew System::Windows::Forms::NumericUpDown());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label3 = (gcnew System::Windows::Forms::Label());
+			this->nUnDManageOrders = (gcnew System::Windows::Forms::NumericUpDown());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->nUnDManageUsers))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->nUnDManageProducts))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->nUnDManageOrders))->BeginInit();
@@ -105,6 +106,7 @@ namespace myShop {
 			this->btnManageProducts->TabIndex = 1;
 			this->btnManageProducts->Text = L"Manage Products";
 			this->btnManageProducts->UseVisualStyleBackColor = true;
+			this->btnManageProducts->Click += gcnew System::EventHandler(this, &AdminForm::btnManageProducts_Click);
 			// 
 			// btnManageOrders
 			// 
@@ -125,6 +127,7 @@ namespace myShop {
 			this->btnExit->TabIndex = 3;
 			this->btnExit->Text = L"Exit";
 			this->btnExit->UseVisualStyleBackColor = true;
+			this->btnExit->Click += gcnew System::EventHandler(this, &AdminForm::btnExit_Click);
 			// 
 			// WelcomeLabel
 			// 
@@ -156,14 +159,6 @@ namespace myShop {
 			this->nUnDManageProducts->Size = System::Drawing::Size(120, 38);
 			this->nUnDManageProducts->TabIndex = 6;
 			// 
-			// nUnDManageOrders
-			// 
-			this->nUnDManageOrders->Anchor = System::Windows::Forms::AnchorStyles::None;
-			this->nUnDManageOrders->Location = System::Drawing::Point(649, 175);
-			this->nUnDManageOrders->Name = L"nUnDManageOrders";
-			this->nUnDManageOrders->Size = System::Drawing::Size(120, 38);
-			this->nUnDManageOrders->TabIndex = 7;
-			// 
 			// label1
 			// 
 			this->label1->Anchor = System::Windows::Forms::AnchorStyles::None;
@@ -194,16 +189,24 @@ namespace myShop {
 			this->label3->TabIndex = 10;
 			this->label3->Text = L"Order\'s ID:";
 			// 
+			// nUnDManageOrders
+			// 
+			this->nUnDManageOrders->Anchor = System::Windows::Forms::AnchorStyles::None;
+			this->nUnDManageOrders->Location = System::Drawing::Point(649, 166);
+			this->nUnDManageOrders->Name = L"nUnDManageOrders";
+			this->nUnDManageOrders->Size = System::Drawing::Size(120, 38);
+			this->nUnDManageOrders->TabIndex = 11;
+			// 
 			// AdminForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(16, 31);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::OldLace;
 			this->ClientSize = System::Drawing::Size(829, 487);
+			this->Controls->Add(this->nUnDManageOrders);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->label1);
-			this->Controls->Add(this->nUnDManageOrders);
 			this->Controls->Add(this->nUnDManageProducts);
 			this->Controls->Add(this->nUnDManageUsers);
 			this->Controls->Add(this->WelcomeLabel);
@@ -213,7 +216,7 @@ namespace myShop {
 			this->Controls->Add(this->btnManageUsers);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(238)));
-			this->Margin = System::Windows::Forms::Padding(6, 6, 6, 6);
+			this->Margin = System::Windows::Forms::Padding(6);
 			this->Name = L"AdminForm";
 			this->Text = L"AdminForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->nUnDManageUsers))->EndInit();
@@ -228,5 +231,11 @@ namespace myShop {
 	}
 	private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
+private: System::Void btnExit_Click(System::Object^ sender, System::EventArgs^ e) {
+	this->Close();
+}
+private: System::Void btnManageProducts_Click(System::Object^ sender, System::EventArgs^ e) {
+
+}
 };
 }

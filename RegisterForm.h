@@ -312,7 +312,7 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 	}
 
 	try {
-		String^ stringConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
+		String^ stringConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True" };
 		
 		//Open connection
 		SqlConnection conn{stringConn};

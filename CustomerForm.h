@@ -119,6 +119,7 @@ namespace myShop {
 			this->btnChangeUserData->TabIndex = 3;
 			this->btnChangeUserData->Text = L"Change User Info";
 			this->btnChangeUserData->UseVisualStyleBackColor = true;
+			this->btnChangeUserData->Click += gcnew System::EventHandler(this, &CustomerForm::btnChangeUserData_Click);
 			// 
 			// btnNewOrder
 			// 
@@ -128,6 +129,7 @@ namespace myShop {
 			this->btnNewOrder->TabIndex = 4;
 			this->btnNewOrder->Text = L"New Order";
 			this->btnNewOrder->UseVisualStyleBackColor = true;
+			this->btnNewOrder->Click += gcnew System::EventHandler(this, &CustomerForm::btnNewOrder_Click);
 			// 
 			// btnManageOrders
 			// 
@@ -137,6 +139,7 @@ namespace myShop {
 			this->btnManageOrders->TabIndex = 5;
 			this->btnManageOrders->Text = L"Manage Orders";
 			this->btnManageOrders->UseVisualStyleBackColor = true;
+			this->btnManageOrders->Click += gcnew System::EventHandler(this, &CustomerForm::btnManageOrders_Click);
 			// 
 			// btnExit
 			// 
@@ -146,6 +149,7 @@ namespace myShop {
 			this->btnExit->TabIndex = 6;
 			this->btnExit->Text = L"Exit";
 			this->btnExit->UseVisualStyleBackColor = true;
+			this->btnExit->Click += gcnew System::EventHandler(this, &CustomerForm::btnExit_Click);
 			// 
 			// llCurrentOrders
 			// 
@@ -186,7 +190,7 @@ namespace myShop {
 			this->Controls->Add(this->WelcomeLabel);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(238)));
-			this->Margin = System::Windows::Forms::Padding(6, 6, 6, 6);
+			this->Margin = System::Windows::Forms::Padding(6);
 			this->Name = L"CustomerForm";
 			this->Text = L"CustomerForm";
 			this->ResumeLayout(false);
@@ -196,6 +200,14 @@ namespace myShop {
 	private: System::Void llUserData_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
 private: System::Void label3_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btnExit_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btnManageOrders_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btnNewOrder_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void btnChangeUserData_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }

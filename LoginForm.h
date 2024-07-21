@@ -87,6 +87,7 @@ namespace myShop {
 			this->label1->TabIndex = 0;
 			this->label1->Text = L"Login";
 			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->label1->Click += gcnew System::EventHandler(this, &LoginForm::label1_Click);
 			// 
 			// label2
 			// 
@@ -206,7 +207,7 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 	
 	try {
 		// Open connection
-		String^ connString{"Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False"};
+		String^ connString{"Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True"};
 		SqlConnection sqlConn{ connString };
 		sqlConn.Open();
 
@@ -217,14 +218,16 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 
 		SqlDataReader^ reader = command.ExecuteReader();
 
+
+
 		if (reader->Read()) {
 			
 			user = gcnew User;
-			user->name = reader["Name"]->ToString();
-			user->surname = reader["Surname"]->ToString();
-			user->username = reader["Login"]->ToString();
-			user->password = reader["Pwd"]->ToString();
-			user->age = Convert::ToInt32(Convert::ToInt32(reader["Age"]));
+			user->name = reader->GetString(0);
+			user->surname = reader->GetString(1);
+			user->username = reader->GetString(2);
+			user->password = reader->GetString(3);
+			user->age = reader->GetInt32(4);
 
 
 			this->Close();
@@ -250,6 +253,8 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 private: System::Void llRegister_LinkClicked(System::Object^ sender, System::Windows::Forms::LinkLabelLinkClickedEventArgs^ e) {
 	switchToRegister = true;
 	this->Close();
+}
+private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }

@@ -9,5 +9,4 @@ public ref class User {
 		String^ username{""};
 		String^ password{""};
 		int age{0};
-
 };
