@@ -124,6 +124,7 @@ namespace myShop {
 			this->tbUsername->Name = L"tbUsername";
 			this->tbUsername->Size = System::Drawing::Size(368, 38);
 			this->tbUsername->TabIndex = 3;
+			this->tbUsername->TextChanged += gcnew System::EventHandler(this, &LoginForm::tbUsername_TextChanged);
 			// 
 			// tbPassword
 			// 
@@ -211,7 +212,7 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		SqlConnection sqlConn{ connString };
 		sqlConn.Open();
 
-		String^ sqlQuery = "Select Name,Surname,Login,Pwd,Age From Users WHERE Login = @Username AND Pwd = @Pwd";
+		String^ sqlQuery = "Select Id,Name,Surname,Login,Pwd,Age From Users WHERE Login = @Username AND Pwd = @Pwd";
 		SqlCommand command(sqlQuery, %sqlConn);
 		command.Parameters->AddWithValue("@Username",username);
 		command.Parameters->AddWithValue("@Pwd", password);
@@ -223,11 +224,12 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		if (reader->Read()) {
 			
 			user = gcnew User;
-			user->name = reader->GetString(0);
-			user->surname = reader->GetString(1);
-			user->username = reader->GetString(2);
-			user->password = reader->GetString(3);
-			user->age = reader->GetInt32(4);
+			user -> Id = reader->GetInt32(0);
+			user->name = reader->GetString(1);
+			user->surname = reader->GetString(2);
+			user->username = reader->GetString(3);
+			user->password = reader->GetString(4);
+			user->age = reader->GetInt32(5);
 
 
 			this->Close();
@@ -237,6 +239,9 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 			MessageBox::Show("Username or password is incorrect", "Error"
 				, MessageBoxButtons::OK, MessageBoxIcon::Error);
 		}
+
+		reader->Close();
+		sqlConn.Close();
 	
 	}
 	catch (Exception^ e) {
@@ -255,6 +260,8 @@ private: System::Void llRegister_LinkClicked(System::Object^ sender, System::Win
 	this->Close();
 }
 private: System::Void label1_Click(System::Object^ sender, System::EventArgs^ e) {
+}
+private: System::Void tbUsername_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }

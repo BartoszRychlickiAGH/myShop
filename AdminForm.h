@@ -1,4 +1,6 @@
 #pragma once
+#include "LoginForm.h"
+#include "users.h"
 
 namespace myShop {
 
@@ -8,14 +10,14 @@ namespace myShop {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
-
+	using namespace::System::Data::SqlClient;
 	/// <summary>
 	/// Summary for AdminForm
 	/// </summary>
 	public ref class AdminForm : public System::Windows::Forms::Form
 	{
 	public:
-		AdminForm(void)
+		AdminForm(User^ user)
 		{
 			InitializeComponent();
 			//

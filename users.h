@@ -8,5 +8,5 @@ public ref class User {
 		String^ surname{""};
 		String^ username{""};
 		String^ password{""};
-		int age{0};
+		int age{ 0 }, Id{0};
 };

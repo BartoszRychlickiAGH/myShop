@@ -58,43 +58,6 @@ void main(array<String^>^ args) {
 
 		}
 	}
-	//check if user exist
-	//connect to database
-	//create query
-	//execute query
-	/*try {
-		String^ connString{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
-		SqlConnection sqlConn{ connString };
-		sqlConn.Open();
-
-		String^ sqlQuery = "Select Count(Id) as Amount From Users WHERE Login = @Username;";
-		SqlCommand command(sqlQuery, % sqlConn);
-		command.Parameters->AddWithValue("@Username", user->username);
-
-		SqlDataReader^ reader = command.ExecuteReader();
-
-		if (reader->Read()) {
-			numberofUsername = Convert::ToInt32(reader["Amount"]);
-
-		}
-		else {
-			MessageBox::Show("Invalid database read", "Error"
-				, MessageBoxButtons::OK, MessageBoxIcon::Error);
-		}
-
-
-	}
-	catch (Exception^ ey) {
-		MessageBox::Show(ey->Message, "Error", MessageBoxButtons::OK,MessageBoxIcon::Error);
-	}
-
-	if (numberofUsername == 0) {
-		MessageBox::Show("There is no user with given username", "Error",
-			MessageBoxButtons::OK, MessageBoxIcon::Error);
-		return;
-	}*/
-
-	//Konwersja String^ na string / lub inne sprawdzenie czy user->username jest równy admin
 	
 	if (user != nullptr) {
 		try {
@@ -118,12 +81,12 @@ void main(array<String^>^ args) {
 			}
 
 			if (isAdmin == 0) { // check if user is not admin
-				myShop::CustomerForm customerForm;
+				myShop::CustomerForm customerForm(user);
 				customerForm.ShowDialog();
 
 			}
 			else {
-				myShop::AdminForm adminForm;
+				myShop::AdminForm adminForm(user);
 				adminForm.ShowDialog();
 
 			}

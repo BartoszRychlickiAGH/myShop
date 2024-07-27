@@ -182,6 +182,7 @@ namespace myShop {
 			this->tbName->Name = L"tbName";
 			this->tbName->Size = System::Drawing::Size(439, 38);
 			this->tbName->TabIndex = 9;
+			this->tbName->TextChanged += gcnew System::EventHandler(this, &RegisterForm::tbName_TextChanged);
 			// 
 			// tbSurname
 			// 
@@ -321,6 +322,7 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		//Handle query
 		String^ sqlQuery = "INSERT INTO Users(Name,Surname,Login,Pwd,Age) VALUES (@name,@surname,@login,@password,@age)";
 		SqlCommand^ command = gcnew SqlCommand(sqlQuery, % conn);
+
 		command->Parameters->AddWithValue("@name",name );
 		command->Parameters->AddWithValue("@surname",surname);
 		command->Parameters->AddWithValue("@login",username);
@@ -337,6 +339,8 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		user->password = password;
 		user->age = Convert::ToInt32(age);
 
+		conn.Close();
+
 		this->Close();
 
 	}
@@ -345,6 +349,8 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		return;
 		
 	}
+}
+private: System::Void tbName_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 }
 };
 }
