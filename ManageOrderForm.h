@@ -1,13 +1,18 @@
 #pragma once
 #include "users.h"
+#include <array>
+
+
 namespace myShop {
 
+	using std::array;
 	using namespace System;
 	using namespace System::ComponentModel;
 	using namespace System::Collections;
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::Data::SqlClient;
 
 	/// <summary>
 	/// Summary for ManageOrderForm
@@ -16,11 +21,9 @@ namespace myShop {
 	{
 	public:
 		User^ customer;
-		int indexOfOrder;
-		ManageOrderForm(User^ user,int n)
+		ManageOrderForm(User^ user)
 		{
 			customer = user;
-			indexOfOrder = n;
 
 			InitializeComponent();
 			//
@@ -44,7 +47,8 @@ namespace myShop {
 	private: System::Windows::Forms::Button^ btnOK;
 
 	private: System::Windows::Forms::TextBox^ tbQuantity;
-	private: System::Windows::Forms::TextBox^ tbPrice;
+	private: System::Windows::Forms::TextBox^ tbOrderId;
+
 
 	private: System::Windows::Forms::TextBox^ tbProductName;
 
@@ -54,10 +58,12 @@ namespace myShop {
 
 
 	private: System::Windows::Forms::Label^ label5;
-	private: System::Windows::Forms::Label^ label4;
+	private: System::Windows::Forms::Label^ orderIdLabel;
+
 
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::Label^ InformationLabel;
+	private: System::Windows::Forms::Button^ btnDelete;
 
 
 	private:
@@ -76,12 +82,13 @@ namespace myShop {
 			this->btnCancel = (gcnew System::Windows::Forms::Button());
 			this->btnOK = (gcnew System::Windows::Forms::Button());
 			this->tbQuantity = (gcnew System::Windows::Forms::TextBox());
-			this->tbPrice = (gcnew System::Windows::Forms::TextBox());
+			this->tbOrderId = (gcnew System::Windows::Forms::TextBox());
 			this->tbProductName = (gcnew System::Windows::Forms::TextBox());
 			this->label5 = (gcnew System::Windows::Forms::Label());
-			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->orderIdLabel = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->InformationLabel = (gcnew System::Windows::Forms::Label());
+			this->btnDelete = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// btnCancel
@@ -96,7 +103,7 @@ namespace myShop {
 			// 
 			// btnOK
 			// 
-			this->btnOK->Location = System::Drawing::Point(278, 309);
+			this->btnOK->Location = System::Drawing::Point(40, 309);
 			this->btnOK->Name = L"btnOK";
 			this->btnOK->Size = System::Drawing::Size(224, 71);
 			this->btnOK->TabIndex = 31;
@@ -111,12 +118,12 @@ namespace myShop {
 			this->tbQuantity->Size = System::Drawing::Size(476, 38);
 			this->tbQuantity->TabIndex = 28;
 			// 
-			// tbPrice
+			// tbOrderId
 			// 
-			this->tbPrice->Location = System::Drawing::Point(278, 168);
-			this->tbPrice->Name = L"tbPrice";
-			this->tbPrice->Size = System::Drawing::Size(476, 38);
-			this->tbPrice->TabIndex = 27;
+			this->tbOrderId->Location = System::Drawing::Point(278, 168);
+			this->tbOrderId->Name = L"tbOrderId";
+			this->tbOrderId->Size = System::Drawing::Size(476, 38);
+			this->tbOrderId->TabIndex = 27;
 			// 
 			// tbProductName
 			// 
@@ -136,16 +143,16 @@ namespace myShop {
 			this->label5->TabIndex = 22;
 			this->label5->Text = L"Quantity";
 			// 
-			// label4
+			// orderIdLabel
 			// 
-			this->label4->AutoSize = true;
-			this->label4->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+			this->orderIdLabel->AutoSize = true;
+			this->orderIdLabel->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(238)));
-			this->label4->Location = System::Drawing::Point(29, 168);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(101, 38);
-			this->label4->TabIndex = 21;
-			this->label4->Text = L"Price:";
+			this->orderIdLabel->Location = System::Drawing::Point(29, 168);
+			this->orderIdLabel->Name = L"orderIdLabel";
+			this->orderIdLabel->Size = System::Drawing::Size(145, 38);
+			this->orderIdLabel->TabIndex = 21;
+			this->orderIdLabel->Text = L"Order Id:";
 			// 
 			// label2
 			// 
@@ -169,19 +176,30 @@ namespace myShop {
 			this->InformationLabel->Text = L"Change order data";
 			this->InformationLabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
+			// btnDelete
+			// 
+			this->btnDelete->Location = System::Drawing::Point(289, 309);
+			this->btnDelete->Name = L"btnDelete";
+			this->btnDelete->Size = System::Drawing::Size(224, 71);
+			this->btnDelete->TabIndex = 33;
+			this->btnDelete->Text = L"Delete";
+			this->btnDelete->UseVisualStyleBackColor = true;
+			this->btnDelete->Click += gcnew System::EventHandler(this, &ManageOrderForm::btnDelete_Click);
+			// 
 			// ManageOrderForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(16, 31);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Lavender;
 			this->ClientSize = System::Drawing::Size(781, 423);
+			this->Controls->Add(this->btnDelete);
 			this->Controls->Add(this->btnCancel);
 			this->Controls->Add(this->btnOK);
 			this->Controls->Add(this->tbQuantity);
-			this->Controls->Add(this->tbPrice);
+			this->Controls->Add(this->tbOrderId);
 			this->Controls->Add(this->tbProductName);
 			this->Controls->Add(this->label5);
-			this->Controls->Add(this->label4);
+			this->Controls->Add(this->orderIdLabel);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->InformationLabel);
 			this->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 16.2F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
@@ -194,8 +212,125 @@ namespace myShop {
 
 		}
 #pragma endregion
+	
 	private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) {
 
+		String^ productName = tbProductName->Text;
+		String^ orderProductName{""};
+		String^ orderIdString = tbOrderId->Text;
+		String^ quantityString = tbQuantity->Text;
+
+		int orderId{ 0 }, productPrice{0};
+		int givenQuantity{ 0 }, quantityOfProduct{ 0 }, oldQuantity{0};
+		
+		
+		givenQuantity = Convert::ToInt32(quantityString);
+		orderId = Convert::ToInt32(orderIdString);
+
+		//2. check if orderIdString is an number
+		
+		//3. check if quantity is an number
+		//4. check if given productName is equal to this in order
+
+		try {
+			
+			String^ stringConn{"Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=false"};
+			SqlConnection conn{ stringConn };
+			conn.Open();
+
+
+
+			String^ query = "SELECT COUNT(ProductId) FROM products WHERE ProductName = @productName";
+			SqlCommand cmd{ query,% conn };
+			cmd.Parameters->AddWithValue("@productName", productName);
+		
+			SqlDataReader^ reader = cmd.ExecuteReader();
+
+			if (reader->Read()) {
+				if (reader->GetInt32(0) == 0) {
+					MessageBox::Show("Wrong name of product","Error",MessageBoxButtons::OK,MessageBoxIcon::Error);
+					return;
+				}
+			}
+			reader->Close();
+
+			query = "SELECT Price,Quantity FROM products WHERE ProductName = @productName";
+			SqlCommand cmd_quantity{ query,% conn };
+			cmd_quantity.Parameters->AddWithValue("@productName", productName);
+
+			reader = cmd_quantity.ExecuteReader();
+
+			if (reader->Read()) {
+				productPrice = reader->GetInt32(0);
+				quantityOfProduct = reader->GetInt32(1);
+			}
+
+			reader->Close();
+
+			if (givenQuantity > quantityOfProduct + oldQuantity) {
+				MessageBox::Show("Given quantity is unavailable!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return;
+			}
+			
+			query = "SELECT COUNT(CustomerId) FROM Orders WHERE OrderId = @OrderId";
+			SqlCommand cmd_Id{ query,% conn };
+			cmd_Id.Parameters->AddWithValue("@OrderId",orderId);
+			
+			reader = cmd_Id.ExecuteReader();
+
+			if (reader->Read()) {
+				if (reader->GetInt32(0) == 0) {
+					MessageBox::Show("Enetered wrong order id!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					return;
+				}
+			}
+
+			reader->Close();
+			query = "SELECT Quantity FROM Orders WHERE OrderId = @OrderId";
+			SqlCommand cmd_Q{ query,% conn };
+			cmd_Q.Parameters->AddWithValue("@OrderId", orderId);
+
+			reader = cmd_Q.ExecuteReader();
+
+			if (reader->Read()) {
+				oldQuantity = reader->GetInt32(0);
+			}
+
+			reader->Close();
+
+			if (givenQuantity <= quantityOfProduct + oldQuantity and givenQuantity > 0) {
+				if (givenQuantity > oldQuantity and givenQuantity-oldQuantity < quantityOfProduct or givenQuantity < oldQuantity) {
+
+					query = "UPDATE products set quantity = @quantity WHERE ProductName = @productName";
+					SqlCommand cmd_prod{ query,% conn };
+
+					cmd_prod.Parameters->AddWithValue("@quantity", Convert::ToInt32(quantityOfProduct - givenQuantity + oldQuantity));
+					cmd_prod.Parameters->AddWithValue("@productName", productName);
+
+					cmd_prod.ExecuteNonQuery();
+
+					query = "UPDATE orders set Quantity = @quantity,OrderPrice = @price WHERE OrderId = @orderId";
+					SqlCommand cmd_order{ query,% conn };
+
+					cmd_order.Parameters->AddWithValue("@quantity", Convert::ToInt32(givenQuantity));
+					cmd_order.Parameters->AddWithValue("@orderId", orderId);
+					cmd_order.Parameters->AddWithValue("@price", productPrice * givenQuantity);
+
+					cmd_order.ExecuteNonQuery();
+				}
+			}
+			else {
+				MessageBox::Show("Entered wrong quantity!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return;
+			}
+
+			reader->Close();
+			conn.Close();
+			this->Close();
+
+		}catch (Exception^ em) {
+			MessageBox::Show(em->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+		}
 
 
 
@@ -203,6 +338,11 @@ namespace myShop {
 	}
 private: System::Void btnCancel_Click(System::Object^ sender, System::EventArgs^ e) {
 	this->Close();
+}
+private: System::Void btnDelete_Click(System::Object^ sender, System::EventArgs^ e) {
+
+
+
 }
 };
 }

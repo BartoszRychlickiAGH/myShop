@@ -130,8 +130,8 @@ namespace myShop {
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Price;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ Quantity;
 	private: System::Windows::Forms::DataGridViewTextBoxColumn^ OrderDate;
-	private: System::Windows::Forms::NumericUpDown^ orderIdIndex;
-	private: System::Windows::Forms::Label^ label2;
+
+
 
 
 
@@ -169,16 +169,13 @@ namespace myShop {
 			this->btnExit = (gcnew System::Windows::Forms::Button());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->dataView = (gcnew System::Windows::Forms::DataGridView());
-			this->llUser = (gcnew System::Windows::Forms::Label());
-			this->orderIdIndex = (gcnew System::Windows::Forms::NumericUpDown());
 			this->OrderId = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->ProductName = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Price = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->Quantity = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->OrderDate = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
-			this->label2 = (gcnew System::Windows::Forms::Label());
+			this->llUser = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataView))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->orderIdIndex))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// WelcomeLabel
@@ -239,7 +236,7 @@ namespace myShop {
 			// 
 			this->btnManageOrders->Location = System::Drawing::Point(3, 325);
 			this->btnManageOrders->Name = L"btnManageOrders";
-			this->btnManageOrders->Size = System::Drawing::Size(128, 91);
+			this->btnManageOrders->Size = System::Drawing::Size(260, 91);
 			this->btnManageOrders->TabIndex = 5;
 			this->btnManageOrders->Text = L"Manage Orders";
 			this->btnManageOrders->UseVisualStyleBackColor = true;
@@ -278,31 +275,6 @@ namespace myShop {
 			this->dataView->Size = System::Drawing::Size(790, 214);
 			this->dataView->TabIndex = 8;
 			// 
-			// llUser
-			// 
-			this->llUser->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->llUser->BackColor = System::Drawing::Color::LightSteelBlue;
-			this->llUser->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
-				static_cast<System::Byte>(238)));
-			this->llUser->Location = System::Drawing::Point(287, 181);
-			this->llUser->Name = L"llUser";
-			this->llUser->Size = System::Drawing::Size(790, 131);
-			this->llUser->TabIndex = 11;
-			this->llUser->Text = L"User info";
-			this->llUser->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
-			this->llUser->Click += gcnew System::EventHandler(this, &CustomerForm::label2_Click);
-			// 
-			// orderIdIndex
-			// 
-			this->orderIdIndex->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->orderIdIndex->Location = System::Drawing::Point(137, 378);
-			this->orderIdIndex->Name = L"orderIdIndex";
-			this->orderIdIndex->Size = System::Drawing::Size(120, 38);
-			this->orderIdIndex->TabIndex = 12;
-			this->orderIdIndex->TextAlign = System::Windows::Forms::HorizontalAlignment::Center;
-			// 
 			// OrderId
 			// 
 			this->OrderId->HeaderText = L"OrderId";
@@ -338,13 +310,20 @@ namespace myShop {
 			this->OrderDate->Name = L"OrderDate";
 			this->OrderDate->Width = 150;
 			// 
-			// label2
+			// llUser
 			// 
-			this->label2->Location = System::Drawing::Point(133, 336);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(124, 27);
-			this->label2->TabIndex = 13;
-			this->label2->Text = L"Order Id:";
+			this->llUser->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left)
+				| System::Windows::Forms::AnchorStyles::Right));
+			this->llUser->BackColor = System::Drawing::Color::LightSteelBlue;
+			this->llUser->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(238)));
+			this->llUser->Location = System::Drawing::Point(287, 181);
+			this->llUser->Name = L"llUser";
+			this->llUser->Size = System::Drawing::Size(790, 131);
+			this->llUser->TabIndex = 11;
+			this->llUser->Text = L"User info";
+			this->llUser->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
+			this->llUser->Click += gcnew System::EventHandler(this, &CustomerForm::label2_Click);
 			// 
 			// CustomerForm
 			// 
@@ -352,8 +331,6 @@ namespace myShop {
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::SystemColors::InactiveCaption;
 			this->ClientSize = System::Drawing::Size(1089, 551);
-			this->Controls->Add(this->label2);
-			this->Controls->Add(this->orderIdIndex);
 			this->Controls->Add(this->llUser);
 			this->Controls->Add(this->dataView);
 			this->Controls->Add(this->label3);
@@ -370,7 +347,6 @@ namespace myShop {
 			this->Name = L"CustomerForm";
 			this->Text = L"CustomerForm";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->dataView))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->orderIdIndex))->EndInit();
 			this->ResumeLayout(false);
 
 		}
@@ -382,10 +358,7 @@ private: System::Void btnExit_Click(System::Object^ sender, System::EventArgs^ e
 }
 private: System::Void btnManageOrders_Click(System::Object^ sender, System::EventArgs^ e) {
 		this->Hide();
-		Decimal orderId = orderIdIndex->Value;
-		int id = Decimal::ToInt32(orderId);
-
-		myShop::ManageOrderForm^ manageOrder = gcnew myShop::ManageOrderForm(customer,id);
+		myShop::ManageOrderForm^ manageOrder = gcnew myShop::ManageOrderForm(customer);
 		manageOrder->ShowDialog();
 		
 		uploadOrders();
@@ -399,7 +372,6 @@ private: System::Void btnNewOrder_Click(System::Object^ sender, System::EventArg
 
 	uploadOrders();
 	this->Show();
-	
 }
 private: System::Void btnChangeUserData_Click(System::Object^ sender, System::EventArgs^ e) {
 	this->Hide();
