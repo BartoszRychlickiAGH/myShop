@@ -323,7 +323,7 @@ namespace myShop {
 				MessageBox::Show("Entered wrong quantity!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 				return;
 			}
-
+			MessageBox::Show("Changed order details", "Information", MessageBoxButtons::OK, MessageBoxIcon::Information);
 			reader->Close();
 			conn.Close();
 			this->Close();
@@ -340,9 +340,93 @@ private: System::Void btnCancel_Click(System::Object^ sender, System::EventArgs^
 	this->Close();
 }
 private: System::Void btnDelete_Click(System::Object^ sender, System::EventArgs^ e) {
+	// pobieranie orderId
 
 
+	//1. check if orderId is in database
+	//2. check if orderId is attached to given customer
 
+	//delete order from orders
+
+	String^ orderIdString = tbOrderId->Text;
+	int^ givenOrderId = Convert::ToInt32(orderIdString);
+	int quantityFromOrder{ 0 };
+	int quantityFromProducts{ 0 };
+	String^ productName{ "" };
+
+	try {
+		String^ strConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
+		SqlConnection conn{ strConn };
+		conn.Open();
+
+		String^ query = "SELECT COUNT(OrderId) FROM Orders WHERE OrderId = @OrderId and CustomerId = @CustomerId";
+		SqlCommand cmd{ query,% conn };
+		cmd.Parameters->AddWithValue("@OrderId", givenOrderId);
+		cmd.Parameters->AddWithValue("@CustomerId", customer->Id);
+
+		SqlDataReader^ reader = cmd.ExecuteReader();
+
+		if (reader->Read()) {
+			if (!reader->GetInt32(0)) {
+				MessageBox::Show("Given orderId is invalid or not attached to your account", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			}
+		}
+		reader->Close();
+		
+		query = "SELECT Quantity,ProductName FROM Orders WHERE OrderId = @OrderId";
+		SqlCommand cmd_q{ query,% conn };
+		cmd_q.Parameters->AddWithValue("@OrderId", givenOrderId);
+
+		reader = cmd_q.ExecuteReader();
+
+		if (reader->Read()) {
+			quantityFromOrder = reader->GetInt32(0);
+			productName = reader->GetString(1);
+		}
+		reader->Close();
+
+		query = "SELECT Quantity FROM Products WHERE ProductName = @ProductName";
+		SqlCommand cmd_qp{ query,% conn };
+		cmd_qp.Parameters->AddWithValue("@ProductName", productName);
+
+		reader = cmd_qp.ExecuteReader();
+
+		if (reader->Read()) {
+			quantityFromProducts = reader->GetInt32(0);
+		}
+		reader->Close();
+
+		int newQuantity = quantityFromOrder + quantityFromProducts;
+
+		query = "UPDATE Products SET Quantity = @quantity WHERE ProductName = @ProductName";
+		SqlCommand cmd_insert{ query,% conn };
+
+		cmd_insert.Parameters->AddWithValue("@quantity", newQuantity);
+		cmd_insert.Parameters->AddWithValue("ProductName", productName);
+
+		cmd_insert.ExecuteNonQuery();
+
+		query = "DELETE from orders WHERE orderId = @orderId";
+		SqlCommand cmd_delete{ query,%conn };
+		cmd_delete.Parameters->AddWithValue("@orderId", givenOrderId);
+
+		cmd_delete.ExecuteNonQuery();
+
+		MessageBox::Show("Deleted ordrer","Information",MessageBoxButtons::OK,MessageBoxIcon::Information);
+
+
+		//get quanttity, productName, from  orders, where orderid = givenOrderId
+		//get quantity from products from products where prodyctname = productNameFromOrder
+		// add quantity_from_order and quantity_from_product
+		//update quantity_of_product in products where productname = productNameFromOrder
+		
+
+		conn.Close();
+		this->Close();
+	}
+	catch (Exception ^ ed) {
+		MessageBox::Show(ed->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+	}
 }
 };
 }
