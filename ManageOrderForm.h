@@ -21,14 +21,32 @@ namespace myShop {
 	{
 	public:
 		User^ customer;
-		ManageOrderForm(User^ user)
+		int^ userId{0};
+		ManageOrderForm(User^ user,int^ n)
 		{
 			customer = user;
-
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
+			if (customer->username == "Admin" or customer->username == "admin") {
+				String^ strConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
+				SqlConnection conn{ strConn };
+				conn.Open();
+
+				String^ query = "SELECT COUNT(Id) FROM Users WHERE Id = @id";
+				SqlCommand cmd{ query,% conn };
+				cmd.Parameters->AddWithValue("@id", n);
+
+				SqlDataReader^ reader = cmd.ExecuteReader();
+				if (reader->Read()) {
+					if (reader->GetInt32(0) == 0) {
+						String^ message = "User with given id does not exist";
+						throw(message);
+					}
+				}
+				userId = n;
+			}
 		}
 
 	protected:
@@ -254,6 +272,24 @@ namespace myShop {
 			}
 			reader->Close();
 
+
+			if (customer->username != "Admin") {
+				query = "SELECT Count(Price) FROM Orders WHERE OrderId = @OrderId and customerId = @customerId";
+				SqlCommand cmd_order{ query,% conn };
+				cmd_order.Parameters->AddWithValue("@OrderId", orderId);
+				cmd_order.Parameters->AddWithValue("@customerId", customer->Id);
+
+				reader = cmd_order.ExecuteReader();
+
+				if (reader->Read()) {
+					if (reader->GetInt32(0) == 0) {
+						MessageBox::Show("Order is not associated with your account","Error",MessageBoxButtons::OK,MessageBoxIcon::Error);
+						return;
+					}
+				}
+				reader->Close();
+			}
+
 			query = "SELECT Price,Quantity FROM products WHERE ProductName = @productName";
 			SqlCommand cmd_quantity{ query,% conn };
 			cmd_quantity.Parameters->AddWithValue("@productName", productName);
@@ -359,20 +395,25 @@ private: System::Void btnDelete_Click(System::Object^ sender, System::EventArgs^
 		SqlConnection conn{ strConn };
 		conn.Open();
 
-		String^ query = "SELECT COUNT(OrderId) FROM Orders WHERE OrderId = @OrderId and CustomerId = @CustomerId";
-		SqlCommand cmd{ query,% conn };
-		cmd.Parameters->AddWithValue("@OrderId", givenOrderId);
-		cmd.Parameters->AddWithValue("@CustomerId", customer->Id);
+		//przerobiæ na uniwersalne dla usera i admina
+		String^ query;
+		SqlDataReader^ reader;
+		if (customer->username != "Admin") {
+			query = "SELECT COUNT(OrderId) FROM Orders WHERE OrderId = @OrderId and CustomerId = @CustomerId";
+			SqlCommand cmd{ query,% conn };
+			cmd.Parameters->AddWithValue("@OrderId", givenOrderId);
+			cmd.Parameters->AddWithValue("@CustomerId", customer->Id);
 
-		SqlDataReader^ reader = cmd.ExecuteReader();
+			reader = cmd.ExecuteReader();
 
-		if (reader->Read()) {
-			if (!reader->GetInt32(0)) {
-				MessageBox::Show("Given orderId is invalid or not attached to your account", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			if (reader->Read()) {
+				if (!reader->GetInt32(0)) {
+					MessageBox::Show("Given orderId is invalid or not attached to your account", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+					return;
+				}
 			}
+			reader->Close();
 		}
-		reader->Close();
-		
 		query = "SELECT Quantity,ProductName FROM Orders WHERE OrderId = @OrderId";
 		SqlCommand cmd_q{ query,% conn };
 		cmd_q.Parameters->AddWithValue("@OrderId", givenOrderId);

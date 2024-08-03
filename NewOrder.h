@@ -311,8 +311,8 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 	String^ productName{ tbProductName->Text };
 	String^ date{ "" };
 	int quantity = Convert::ToInt32(tbQuantity->Text);
-	int check{ 0 }, price{ 0 };
-	int^ customerID{ 0 };
+	int check{ 0 }, price{  };
+	int^ customerID{  };
 	int quantityAvailable{ 20 };
 	if (productName == "" || tbQuantity->Text == "") {
 		MessageBox::Show("All field must be filled", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
@@ -330,7 +330,6 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		String^ stringConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=false" };
 		SqlConnection connect{ stringConn };
 		connect.Open();
-		//////////////////////////////////// LINE 329 - ERROR ////////////////////////////
 		String^ query{ "SELECT COUNT(ProductId) FROM PRODUCTS WHERE ProductName = @name;" };
 		SqlCommand cmd{ query,% connect };
 		

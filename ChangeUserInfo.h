@@ -18,14 +18,36 @@ namespace myShop {
 	public ref class ChangeUserInfo : public System::Windows::Forms::Form
 	{
 	public:
-		User^ user;
-		ChangeUserInfo(User^ user)
+		User^ client;
+		int^ userId{0};
+		ChangeUserInfo(User^ user,int^ n)
 		{
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
-			this->user = user;
+			
+			client = user;
+			
+			if (client->username == "Admin" or client->username == "admin") {
+				String^ strConn{ "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False" };
+				SqlConnection conn{ strConn };
+				conn.Open();
+
+				String^ query = "SELECT COUNT(Id) FROM Users WHERE Id = @id";
+				SqlCommand cmd{ query,% conn };
+				cmd.Parameters->AddWithValue("@id", n);
+
+				SqlDataReader^ reader = cmd.ExecuteReader();
+				if (reader->Read()) {
+					if (reader->GetInt32(0) == 0) {
+						String^ message = "User with given id does not exist";
+						throw(message);
+					}
+				}
+				userId = n;
+			}
+			
 		}
 
 	protected:
@@ -55,6 +77,7 @@ namespace myShop {
 	private: System::Windows::Forms::Label^ label3;
 	private: System::Windows::Forms::Label^ label2;
 	private: System::Windows::Forms::Label^ InformationLabel;
+	private: System::Windows::Forms::Button^ btnDelete;
 
 	private:
 		/// <summary>
@@ -82,6 +105,7 @@ namespace myShop {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->InformationLabel = (gcnew System::Windows::Forms::Label());
+			this->btnDelete = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// btnCancel
@@ -100,7 +124,7 @@ namespace myShop {
 			// 
 			this->btnOK->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
 				static_cast<System::Byte>(238)));
-			this->btnOK->Location = System::Drawing::Point(230, 445);
+			this->btnOK->Location = System::Drawing::Point(33, 445);
 			this->btnOK->Name = L"btnOK";
 			this->btnOK->Size = System::Drawing::Size(244, 73);
 			this->btnOK->TabIndex = 30;
@@ -223,12 +247,25 @@ namespace myShop {
 			this->InformationLabel->Text = L"Change personal data";
 			this->InformationLabel->TextAlign = System::Drawing::ContentAlignment::MiddleCenter;
 			// 
+			// btnDelete
+			// 
+			this->btnDelete->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 19.8F, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Point,
+				static_cast<System::Byte>(238)));
+			this->btnDelete->Location = System::Drawing::Point(283, 445);
+			this->btnDelete->Name = L"btnDelete";
+			this->btnDelete->Size = System::Drawing::Size(244, 73);
+			this->btnDelete->TabIndex = 33;
+			this->btnDelete->Text = L"Delete";
+			this->btnDelete->UseVisualStyleBackColor = true;
+			this->btnDelete->Click += gcnew System::EventHandler(this, &ChangeUserInfo::btnDelete_Click);
+			// 
 			// ChangeUserInfo
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(16, 31);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Lavender;
 			this->ClientSize = System::Drawing::Size(803, 539);
+			this->Controls->Add(this->btnDelete);
 			this->Controls->Add(this->InformationLabel);
 			this->Controls->Add(this->btnCancel);
 			this->Controls->Add(this->btnOK);
@@ -289,23 +326,30 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 		SqlConnection conn{ stringConn };
 		conn.Open();
 
-		//Handle query
-		String^ sqlQuery = "UPDATE Users SET Name=@name,Surname=@surname,Pwd=@password,Age=@age WHERE Login = @username";
+		//Execute change
+		String^ sqlQuery = "UPDATE Users SET Name=@name,Surname=@surname,Pwd=@password,Age=@age WHERE Login = @username or Id = @id";
 		SqlCommand^ command = gcnew SqlCommand(sqlQuery, % conn);
 		command->Parameters->AddWithValue("@name", name);
-		command->Parameters->AddWithValue("@username", user->username);
+		
 		command->Parameters->AddWithValue("@surname", surname);
 		command->Parameters->AddWithValue("@password", password);
 		command->Parameters->AddWithValue("@age", Convert::ToInt32(age));
-
+		if (client->username == "Admin" || client->username == "admin") {
+			command->Parameters->AddWithValue("@id", userId);
+			command->Parameters->AddWithValue("@username", "");
+		}
+		else {
+			command->Parameters->AddWithValue("@username", client->username);
+			command->Parameters->AddWithValue("@id", userId);
+		}
 		command->ExecuteNonQuery();
 
 		//updating user data
 		
-		user->name = name;
-		user->surname = surname;
-		user->password = password;
-		user->age = Convert::ToInt32(age);
+		client->name = name;
+		client->surname = surname;
+		client->password = password;
+		client->age = Convert::ToInt32(age);
 
 		this->Close();
 
@@ -313,6 +357,175 @@ private: System::Void btnOK_Click(System::Object^ sender, System::EventArgs^ e) 
 	catch (Exception^ ex) {
 		MessageBox::Show(ex->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 		return;
+	}
+}
+private: System::Void btnDelete_Click(System::Object^ sender, System::EventArgs^ e) { // error in undefined place
+	
+	//check if given name,surname,age exist
+	try {
+		String^ productName{""};
+		String^ givenName{ tbName->Text };
+		String^ givenSurname{ tbSurname->Text };
+		String^ givenStringAge{ tbAge->Text };
+
+		//check if givenStringAge is a number
+		int^ givenAge{ Convert::ToInt32(givenStringAge) };
+		int^ userId{};
+		int quantityOrder{};
+		int quantityProduct{};
+		int^ newQuantity{ 0 };
+
+		String^ stringConn = "Data Source=(localdb)\\ProjectModels;Initial Catalog=mydb;Integrated Security=True;Encrypt=False";
+		SqlConnection conn{ stringConn };
+		conn.Open();
+		
+		String^ query = "SELECT Count(Id) From Users WHERE Name = @name AND Surname = @surname AND Age = @age";
+		SqlCommand cmd_check{ query, %conn };
+
+		cmd_check.Parameters->AddWithValue("@name", givenName);
+		cmd_check.Parameters->AddWithValue("@surname", givenSurname);
+		cmd_check.Parameters->AddWithValue("@age", givenAge);
+
+		SqlDataReader^ reader = cmd_check.ExecuteReader();
+
+		if(!reader->Read()){
+			MessageBox::Show("Entered wrong name, surname or age","Error",MessageBoxButtons::OK,MessageBoxIcon::Error);
+			return;
+		}
+		if (reader->GetInt32(0)==0) {
+			MessageBox::Show("Account of given parametres do not exist!", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			return;
+		}
+		reader->Close();
+		
+
+		//get user id
+		query = "SELECT Id FROM Users WHERE Name = @name AND Surname = @surname AND Age = @age";
+		SqlCommand cmd_id{ query,% conn };
+		cmd_id.Parameters->AddWithValue("@name",givenName);
+		cmd_id.Parameters->AddWithValue("@surname",givenSurname);
+		cmd_id.Parameters->AddWithValue("@age",givenAge);
+
+		reader = cmd_id.ExecuteReader();
+
+		if (reader->Read()) {
+			userId = reader->GetInt32(0);
+		}
+		reader->Close();
+
+		query = "SELECT COUNT(CustomerId) FROM Orders WHERE CustomerId = @customerId";
+
+		SqlCommand cmd_has_orders{ query,% conn };
+		cmd_has_orders.Parameters->AddWithValue("@customerId", userId);
+
+		reader = cmd_has_orders.ExecuteReader();
+		bool hasOrders{};
+		if (reader->Read()) {
+
+			hasOrders = reader->GetInt32(0) > 0;
+		}
+
+
+		reader->Close();
+		//get quantity of products from order
+		query = "SELECT ProductName FROM Orders WHERE CustomerId = @customerId";
+		SqlCommand cmd_q_order{ query,% conn };
+		cmd_q_order.Parameters->AddWithValue("@customerId", userId);
+		
+		int i{ 0 };
+		
+		if (tbName->Text == "Bartek") {
+			MessageBox::Show("You cannot delete admin account", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+			return;
+		}
+		
+		if (hasOrders) {
+			if (client->username == "Admin" or (client->name == givenName and client->surname == givenSurname)) {  // error in code below
+				//delete order
+				//add quantity of products from order to products table
+					
+				
+					//1. get quantity from orders for exact order with CutomerId = givenCustomerId
+					//2. get the same as in 1. but with ProductName
+					//3. get quantity from products where productName = productNameFromOrder for exact order
+				
+				query = "SELECT COUNT(OrderDate) FROM Orders WHERE CustomerId = @customerId";
+				SqlCommand cmd_count_orders{ query,% conn };
+				if (client->username == "Admin") {
+					cmd_count_orders.Parameters->AddWithValue("@customerId", userId);
+				}
+				else {
+					cmd_count_orders.Parameters->AddWithValue("@customerId", client->Id);
+				}
+				reader = cmd_count_orders.ExecuteReader();
+				if (reader->Read()) {
+					i = reader->GetInt32(0);
+				}
+
+				reader->Close();
+
+
+				for (int j = 0; j <= i - 1; j++) {
+					
+					query = "SELECT Orders.Quantity,Orders.ProductName, Products.Quantity FROM Orders INNER JOIN Products ON Products.ProductName = Orders.ProductName and Orders.CustomerId = @CustomerId";
+					SqlCommand cmd_getData{ query,% conn };
+					cmd_getData.Parameters->AddWithValue("@CustomerId", userId);
+					reader = cmd_getData.ExecuteReader();
+					if(reader->Read()) {
+						quantityOrder = reader->GetInt32(0);
+						productName = reader->GetString(1);
+						quantityProduct = reader->GetInt32(2);
+					}
+					reader->Close();
+
+					newQuantity = quantityOrder + quantityProduct;
+
+					query = "UPDATE Products SET Quantity = @newQuantity where ProductName = @productName";
+					SqlCommand cmd_insert_product{ query,% conn };
+					cmd_insert_product.Parameters->AddWithValue("@newQuantity", newQuantity);
+					cmd_insert_product.Parameters->AddWithValue("@productName", productName);
+
+					cmd_insert_product.ExecuteNonQuery();
+
+					
+				}
+					query = "DELETE FROM Orders WHERE CustomerId = @customerId";
+					SqlCommand cmd_delete_order{ query,% conn };
+					cmd_delete_order.Parameters->AddWithValue("@customerId", userId);
+					cmd_delete_order.ExecuteNonQuery();
+			}
+			else {
+				MessageBox::Show("You can't delete this account", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return;
+			}
+		}
+
+		reader->Close();
+		
+
+
+		query = "DELETE FROM Users WHERE  Id = @Id";
+		SqlCommand cmd_delete{ query,% conn };
+
+		if (client->username == "Admin" || client->username == "admin") {
+			cmd_delete.Parameters->AddWithValue("@Id", userId);
+		}
+		else {
+			cmd_delete.Parameters->AddWithValue("@Id", client->Id);
+		}
+		
+		cmd_delete.ExecuteNonQuery();
+		
+		MessageBox::Show("Deleted account!","Status",MessageBoxButtons::OK,MessageBoxIcon::Information);
+		
+		conn.Close();
+		this->Close();
+	}
+	catch (Exception^ ec) {
+		MessageBox::Show(ec->Message, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
+	}
+	catch (String^ sp) {
+		MessageBox::Show(sp, "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
 	}
 }
 };

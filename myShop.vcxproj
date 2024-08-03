@@ -129,8 +129,10 @@
     <ClCompile Include="ChangeProductData.cpp" />
     <ClCompile Include="ChangeUserInfo.cpp" />
     <ClCompile Include="CustomerForm.cpp" />
+    <ClCompile Include="dbdata.cpp" />
     <ClCompile Include="LoginForm.cpp" />
     <ClCompile Include="ManageOrderForm.cpp" />
+    <ClCompile Include="ManageProduct.cpp" />
     <ClCompile Include="NewOrder.cpp" />
     <ClCompile Include="RegisterForm.cpp" />
     <ClCompile Include="Source.cpp" />
@@ -146,6 +148,12 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="CustomerForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="dbdata.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
+    <ClInclude Include="ManageProduct.h">
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="orders.h" />
@@ -176,11 +184,17 @@
     <EmbeddedResource Include="CustomerForm.resx">
       <DependentUpon>CustomerForm.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="dbdata.resx">
+      <DependentUpon>dbdata.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LoginForm.resx">
       <DependentUpon>LoginForm.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ManageOrderForm.resx">
       <DependentUpon>ManageOrderForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageProduct.resx">
+      <DependentUpon>ManageProduct.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NewOrder.resx">
       <DependentUpon>NewOrder.h</DependentUpon>

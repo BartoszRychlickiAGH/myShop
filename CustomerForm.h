@@ -358,7 +358,7 @@ private: System::Void btnExit_Click(System::Object^ sender, System::EventArgs^ e
 }
 private: System::Void btnManageOrders_Click(System::Object^ sender, System::EventArgs^ e) {
 		this->Hide();
-		myShop::ManageOrderForm^ manageOrder = gcnew myShop::ManageOrderForm(customer);
+		myShop::ManageOrderForm^ manageOrder = gcnew myShop::ManageOrderForm(customer,0);
 		manageOrder->ShowDialog();
 		
 		uploadOrders();
@@ -375,7 +375,7 @@ private: System::Void btnNewOrder_Click(System::Object^ sender, System::EventArg
 }
 private: System::Void btnChangeUserData_Click(System::Object^ sender, System::EventArgs^ e) {
 	this->Hide();
-	myShop::ChangeUserInfo^ changeUserInfo = gcnew myShop::ChangeUserInfo(customer);
+	myShop::ChangeUserInfo^ changeUserInfo = gcnew myShop::ChangeUserInfo(customer,0);
 	changeUserInfo->ShowDialog();
 	uploadOrders();
 	this->Show();
